@@ -55,6 +55,14 @@ function App() {
 
   const [showHelp, setShowHelp] = useState(false);
 
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  const isTouchDevice = "ontouchstart" in window;
+
+  const [draggingTile, setDraggingTile] = useState(null);
+
+  const [touchPos, setTouchPos] = useState({ x: 0, y: 0 });
+
   const getNeighbors = (index) => {
     const neighbors = [];
 
@@ -69,6 +77,17 @@ function App() {
     return neighbors;
   };
 
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+
+    checkOrientation();
+
+    window.addEventListener("resize", checkOrientation);
+
+    return () => window.removeEventListener("resize", checkOrientation);
+  }, []);
   useEffect(() => {
     if (time <= 0 || isPaused) return;
 
@@ -256,11 +275,12 @@ function App() {
           </div>
 
           {/* GRID */}
-          <div className="grid">
+          <div className="grid" >
             {grid.map((cell, i) => (
               <div
                 key={i}
                 className="cell"
+                data-index={i}
 
                 onDragOver={(e) => e.preventDefault()}
 
@@ -337,9 +357,92 @@ function App() {
             {/* ACTIVE TILE */}
             <div
               className={getTileClass(activeTile)}
-              draggable={!gameOver && !isPaused}
+
+              draggable={!isTouchDevice && !gameOver && !isPaused}  // 🔥 FIX
+
               onDragStart={(e) => {
+                if (isTouchDevice) return; // extra safety
                 e.dataTransfer.setData("tile", JSON.stringify(activeTile));
+              }}
+
+              onTouchStart={(e) => {
+                if (!isTouchDevice) return; // 🔥 only mobile
+
+                if (gameOver || isPaused) return;
+
+                const touch = e.touches[0];
+
+                setDraggingTile(activeTile);
+                setTouchPos({
+                  x: touch.clientX,
+                  y: touch.clientY
+                });
+              }}
+
+              onTouchMove={(e) => {
+                if (!isTouchDevice) return;
+
+                const touch = e.touches[0];
+
+                setTouchPos({
+                  x: touch.clientX,
+                  y: touch.clientY
+                });
+              }}
+
+              onTouchEnd={(e) => {
+                if (!isTouchDevice) return;
+                if (!draggingTile) return;
+
+                const element = document.elementFromPoint(
+                  touchPos.x,
+                  touchPos.y
+                );
+
+                if (!element) return;
+
+                // 🔥 GRID
+                const cell = element.closest(".cell");
+                if (cell) {
+                  const index = Number(cell.dataset.index);
+
+                  if (grid[index] === null) {
+                    let newGrid = [...grid];
+                    newGrid[index] = draggingTile;
+
+                    const result = handleMerge(newGrid, index);
+
+                    setGrid(result.newGrid);
+                    setScore(prev => prev + result.gainedScore);
+
+                    if (isGameOver(result.newGrid)) {
+                      setGameOver(true);
+                    }
+
+                    updateQueue();
+                  }
+                }
+
+                // 🔥 KEEP
+                if (element.closest(".keep-box")) {
+                  if (!keepVal) {
+                    setKeepVal(draggingTile);
+                    updateQueue();
+                  } else {
+                    setQueue(prev => [keepVal, prev[1]]);
+                    setKeepVal(draggingTile);
+                  }
+                }
+
+                // 🔥 TRASH
+                if (element.closest(".trash-box")) {
+                  if (trashCount > 0) {
+                    setTrashCount(prev => prev - 1);
+                    updateQueue();
+                  }
+                }
+
+                setDraggingTile(null);
               }}
             >
               {activeTile?.value}
@@ -432,6 +535,28 @@ function App() {
         </div>
       )}
 
+      {isPortrait && (
+        <div className="rotate-overlay">
+          <div className="rotate-card">
+            <h2>Rotate Device</h2>
+            <p>Please rotate your device to landscape mode</p>
+          </div>
+        </div>
+      )}
+      {draggingTile && (
+        <div
+          className={`tile ${draggingTile.color}`}
+          style={{
+            position: "fixed",
+            left: touchPos.x - 25,
+            top: touchPos.y - 25,
+            pointerEvents: "none",
+            zIndex: 9999
+          }}
+        >
+          {draggingTile.value}
+        </div>
+      )}
     </div>
   );
 
