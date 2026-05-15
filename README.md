@@ -4,7 +4,7 @@ A fun and interactive number puzzle game built using React + Vite, where players
 
 🚀 Live Demo
 
-(I'll add it very soon)
+https://just-divide-game-eosin.vercel.app/
 
 📌 Features
 
