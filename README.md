@@ -1,16 +1,105 @@
-# React + Vite
+🎮 Just Divide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fun and interactive number puzzle game built using React + Vite, where players strategically place tiles and divide numbers to clear the board and score points.
 
-Currently, two official plugins are available:
+🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+(I'll add it very soon)
 
-## React Compiler
+📌 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+🎯 Drag & Drop gameplay (Desktop)
+📱 Touch Drag support (Mobile)
+🧠 Smart merge logic (division rules)
+⏱ Countdown timer
+⏸ Pause / Resume functionality
+♻️ Restart system
+🧺 Trash system (limited uses)
+📦 Keep tile feature
+📊 Score & Level system
+❓ Help popup
+🔄 Landscape mode enforced for better gameplay
 
-## Expanding the ESLint configuration
+🎮 How to Play
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Drag tiles from the tile holder to the grid
+If two tiles:
+Are equal → both disappear
+Are divisible → larger ÷ smaller
+Use:
+KEEP to store a tile
+TRASH to remove a tile
+Clear tiles to gain score
+Game ends when:
+Timer runs out ⏱
+No moves left ❌
+
+🛠 Tech Stack
+
+⚛️ React (Hooks)
+⚡ Vite
+🎨 CSS (Custom UI)
+🧠 Game Logic (Custom Algorithms)
+
+📁 Project Structure
+just-divide/
+├── public/
+│   └── assets/
+│       ├── images, tiles, backgrounds
+├── src/
+│   ├── App.jsx
+│   ├── App.css
+│   ├── main.jsx
+├── package.json
+├── vite.config.js
+
+⚙️ Installation & Setup
+
+# Clone the repo
+git clone https://github.com/your-username/just-divide.git
+
+# Go to project folder
+cd just-divide
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+⚠️ Important Notes
+
+Assets must be inside:
+
+public/assets/
+
+Use paths like:
+
+/assets/image.png
+For proper asset handling in Vite, ensure:
+// vite.config.js
+export default defineConfig({
+  plugins: [react()],
+  base: "./"
+})
+📱 Device Support
+Platform	Support
+Desktop	✅ Drag & Drop
+Mobile	✅ Touch Drag
+Portrait Mode	❌ Not Supported
+Landscape Mode	✅ Recommended
+
+🔥 Future Improvements
+
+🔊 Sound effects
+✨ Animations (merge, drop)
+🏆 Best score system
+📱 Full mobile polish
+🎯 Difficulty levels
+
+👨‍💻 Author
+
+Mohammed Salman
+
+📄 License
+
+This project is open-source and free to use.
